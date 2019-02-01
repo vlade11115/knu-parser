@@ -102,3 +102,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+knu_parser/\.DS_Store
+
+\.DS_Store
+
+*.html
+
+\.idea/
