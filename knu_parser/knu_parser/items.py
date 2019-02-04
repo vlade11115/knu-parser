@@ -9,6 +9,8 @@ import scrapy
 
 
 class KnuParserItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    faculty_id = scrapy.Field()
+    faculty_name = scrapy.Field()
+    course_id = scrapy.Field()
+    group_id = scrapy.Field()
+    group_name = scrapy.Field()
