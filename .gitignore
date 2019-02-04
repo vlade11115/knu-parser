@@ -110,3 +110,5 @@ knu_parser/\.DS_Store
 *.html
 
 \.idea/
+
+*.csv

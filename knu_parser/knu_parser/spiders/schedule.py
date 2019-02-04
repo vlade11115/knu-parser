@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
-import scrapy
+from scrapy import Spider, http
 
 
-class ScheduleSpider(scrapy.Spider):
+class ScheduleSpider(Spider):
     name = 'schedule'
     allowed_domains = ['asu.knu.edu.ua']
 
     def start_requests(self):
         urls = [
-            'http://asu.knu.edu.ua/timeTable/student',
+            'http://asu.knu.edu.ua/timeTable/group',
         ]
-        form_data = {
-            'TimeTableForm[student]': '-1',  # apparently this hack returns whole schedule.
-        }
-
         for url in urls:
-            yield scrapy.http.FormRequest(url=url, callback=self.parse, formdata=form_data, headers=None)
+            yield http.FormRequest(url=url, callback=self.parse)
 
     def parse(self, response):
         page = response.url.split("/")[-2]
@@ -23,3 +19,10 @@ class ScheduleSpider(scrapy.Spider):
         with open(filename, 'wb') as f:
             f.write(response.body)
         self.logger.info('Saved file %s', filename)
+
+        for faculty in response.xpath('//*[@id="TimeTableForm_faculty"]/option'):
+            faculty_id = faculty.xpath('@value').get()
+            if not faculty_id:
+                continue
+            faculty_name = faculty.xpath('text()').get()
+            yield {'faculty_id': faculty_id, 'faculty_name': faculty_name}
