@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from scrapy import Spider, http, shell, loader
+from scrapy import Spider, http, shell, loader, selector
 
 from knu_parser.items import KnuParserItem
 
@@ -77,4 +77,16 @@ class ScheduleSpider(Spider):
         """
         Parse actual schedule of group.
         """
-        shell.inspect_response(response, self)  # for debug
+        # shell.inspect_response(response, self)
+        item = response.meta['item']
+        table = response.xpath('//*[@id="timeTableGroup"]//@data-content')
+        for text in table:
+            if not text:
+                continue
+            # shell.inspect_response(response, self)
+            text_list = list(filter(None, map(str.strip, text.get().split('<br>'))))
+            item['discipline'] = text_list[0]
+            item['audience'] = text_list[1]
+            item['lecturer'] = text_list[2]
+            item['added_at'] = text_list[3]
+            yield item
