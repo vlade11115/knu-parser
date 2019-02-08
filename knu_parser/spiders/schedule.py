@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from scrapy import Spider, http
+from scrapy import Spider, FormRequest
 
 from knu_parser.items import KnuParserItem
 
@@ -7,13 +7,9 @@ from knu_parser.items import KnuParserItem
 class ScheduleSpider(Spider):
     name = 'schedule'
     allowed_domains = ['asu.knu.edu.ua']
-
-    def start_requests(self):
-        urls = [
-            'http://asu.knu.edu.ua/timeTable/group',
-        ]
-        for url in urls:
-            yield http.FormRequest(url=url, callback=self.parse)
+    start_urls = [
+        'http://asu.knu.edu.ua/timeTable/group',
+    ]
 
     def parse(self, response):
         """
@@ -24,31 +20,28 @@ class ScheduleSpider(Spider):
             faculty_name = faculty.xpath('text()').get()
             form_data = {'TimeTableForm[faculty]': faculty_id}
             item = KnuParserItem({'faculty_id': faculty_id, 'faculty_name': faculty_name})
-            request = http.FormRequest(url=response.url, formdata=form_data, callback=self.parse_course)
-            request.meta['item'] = item
-            yield request
+            yield FormRequest(url=response.url, formdata=form_data, callback=self.parse_course,
+                              meta={'item': item})
 
     def parse_course(self, response):
         """
         Parse id of course.
         """
         for course_id in response.xpath('//*[@id="TimeTableForm_course"]/option/@value')[1:].getall():
-            item = response.meta['item'].copy()
+            item = response.meta['item']
             item['course_id'] = course_id
             form_data = {
                 'TimeTableForm[faculty]': item['faculty_id'],
                 'TimeTableForm[course]': item['course_id'],
             }
-            request = http.FormRequest(url=response.url, formdata=form_data, callback=self.parse_group)
-            request.meta['item'] = item
-            yield request
+            yield FormRequest(url=response.url, formdata=form_data, callback=self.parse_group, meta={'item': item})
 
     def parse_group(self, response):
         """
         Parse id and name of group.
         """
         for group in response.xpath('//*[@id="TimeTableForm_group"]/option')[1:]:
-            item = response.meta['item'].copy()
+            item = response.meta['item']
             group_id = group.xpath('@value').get()
             group_name = group.xpath('text()').get()
 
@@ -59,16 +52,15 @@ class ScheduleSpider(Spider):
                 'TimeTableForm[course]': item['course_id'],
                 'TimeTableForm[group]': item['group_id'],
             }
-            request = http.FormRequest(url=response.url, formdata=form_data, callback=self.parse_schedule)
-            request.meta['item'] = item
-            yield request
+            yield FormRequest(url=response.url, formdata=form_data, callback=self.parse_schedule,
+                              meta={'item': item})
 
     def parse_schedule(self, response):
         """
         Parse actual schedule of group.
         """
         table = response.xpath('//*[@id="timeTableGroup"]/tr')
-        item = response.meta['item'].copy()
+        item = response.meta['item']
         for row in table:
             # cycle for day of week
             lessons_info = row.xpath('./td/div[@class="mh-50 cell cell-vertical"]/span[1]/text()').getall()
