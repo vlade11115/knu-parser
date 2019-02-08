@@ -87,3 +87,4 @@ AUTOTHROTTLE_ENABLED = True
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 FEED_FORMAT = "csv"
 FEED_URI = "schedule.csv"
+LOG_LEVEL = 'INFO'
