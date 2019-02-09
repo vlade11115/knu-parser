@@ -15,7 +15,7 @@ class KnuParserItem(scrapy.Item):
     group_id = scrapy.Field()
     group_name = scrapy.Field()
     day_of_week = scrapy.Field()
-    date = scrapy.Field()
+    week_number = scrapy.Field()
     discipline = scrapy.Field()
     lesson_type = scrapy.Field()
     lesson_number = scrapy.Field()

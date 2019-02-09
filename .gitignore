@@ -112,3 +112,5 @@ knu_parser/\.DS_Store
 \.idea/
 
 *.csv
+
+*.json

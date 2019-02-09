@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='knu_parser',
-    version='0.0.1',
+    version='0.0.2',
     packages=setuptools.find_packages(),
     url='https://github.com/vlade11115/knu-parser',
     license='CC0 1.0 Universal',

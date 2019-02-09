@@ -28,7 +28,7 @@ class ScheduleSpider(Spider):
         Parse id of course.
         """
         for course_id in response.xpath('//*[@id="TimeTableForm_course"]/option/@value')[1:].getall():
-            item = response.meta['item']
+            item = response.meta['item'].copy()
             item['course_id'] = course_id
             form_data = {
                 'TimeTableForm[faculty]': item['faculty_id'],
@@ -41,7 +41,7 @@ class ScheduleSpider(Spider):
         Parse id and name of group.
         """
         for group in response.xpath('//*[@id="TimeTableForm_group"]/option')[1:]:
-            item = response.meta['item']
+            item = response.meta['item'].copy()
             group_id = group.xpath('@value').get()
             group_name = group.xpath('text()').get()
 
@@ -60,7 +60,7 @@ class ScheduleSpider(Spider):
         Parse actual schedule of group.
         """
         table = response.xpath('//*[@id="timeTableGroup"]/tr')
-        item = response.meta['item']
+        item = response.meta['item'].copy()
         for row in table:
             # cycle for day of week
             lessons_info = row.xpath('./td/div[@class="mh-50 cell cell-vertical"]/span[1]/text()').getall()
@@ -71,20 +71,22 @@ class ScheduleSpider(Spider):
             day_of_week = row.xpath('./td/div/text()').get()
             item['day_of_week'] = day_of_week
             for day in row.xpath('./td')[1:]:
-                date = day.xpath('./div/text()').get()
-                item['date'] = date
                 lessons = day.xpath('./div[@class="cell mh-50"]')
                 if not lessons:
                     self.logger.debug('Skip empty day %s', item)
                     continue
                 count = 0
+                week_number = 0
                 for lesson in lessons:
                     item['lesson_number'] = lessons_info[count].split()[0]
                     item['lesson_start'] = lessons_start[count]
                     item['lesson_finish'] = lessons_finish[count]
+                    item['week_number'] = (week_number % 2) + 1
                     count += 1
+                    week_number += 1
                     if count == len(lessons_info) - 1:
                         count = 0
+                        week_number = 0
                     lesson_tag_value = lesson.xpath('./@data-content').get()
                     if not lesson_tag_value:
                         self.logger.debug('Skip empty lesson %s', item)
