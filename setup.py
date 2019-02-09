@@ -14,9 +14,9 @@ setuptools.setup(
     description='Simple scraper for new KNU site timetable.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    python_requires='>=3.6',
+    python_requires='>=3.5',
     install_requires=[
-        'scrapy>=1.6.0',
+        'scrapy',
     ],
     entry_points={'scrapy': ['settings = knu_parser.settings']},
 )
