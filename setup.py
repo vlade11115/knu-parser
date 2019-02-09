@@ -18,4 +18,5 @@ setuptools.setup(
     install_requires=[
         'scrapy',
     ],
+    entry_points={'scrapy': ['settings = knu_parser.settings']},
 )
