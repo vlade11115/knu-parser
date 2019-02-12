@@ -71,18 +71,21 @@ class ScheduleSpider(Spider):
                 './td/div[@class="mh-50 cell cell-vertical"]/span[@class="finish"]/text()').getall()
             day_of_week = row.xpath('./td/div/text()').get()
             item['day_of_week'] = day_of_week
-            for day in row.xpath('./td')[1:]:
+            week_number = 1
+
+            days = row.xpath('./td')[1:]
+            for index, day in enumerate(days):
                 item['date'] = day.xpath('./div/text()').get()
+                item['week_number'] = week_number
+                if not (index % len(days)):
+                        week_number = 2 if week_number == 1 else 1
+
                 lessons = day.xpath('./div[@class="cell mh-50"]')
                 if not lessons:
                     self.logger.debug('Skip empty day %s', item)
                     continue
                 count = 0
-                week_number = 1
-                for index, lesson in enumerate(lessons):
-                    item['week_number'] = week_number
-                    if not (index % len(lessons)):
-                        week_number = 2 if week_number == 1 else 1
+                for lesson in lessons:
                     item['lesson_number'] = lessons_info[count].split()[0]
                     item['lesson_start'] = lessons_start[count]
                     item['lesson_finish'] = lessons_finish[count]
