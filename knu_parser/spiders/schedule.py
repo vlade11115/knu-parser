@@ -61,6 +61,7 @@ class ScheduleSpider(Spider):
         """
         table = response.xpath('//*[@id="timeTableGroup"]/tr')
         item = response.meta['item'].copy()
+
         for row in table:
             # cycle for day of week
             lessons_info = row.xpath('./td/div[@class="mh-50 cell cell-vertical"]/span[1]/text()').getall()
@@ -71,22 +72,23 @@ class ScheduleSpider(Spider):
             day_of_week = row.xpath('./td/div/text()').get()
             item['day_of_week'] = day_of_week
             for day in row.xpath('./td')[1:]:
+                item['date'] = day.xpath('./div/text()').get()
                 lessons = day.xpath('./div[@class="cell mh-50"]')
                 if not lessons:
                     self.logger.debug('Skip empty day %s', item)
                     continue
                 count = 0
-                week_number = 0
-                for lesson in lessons:
+                week_number = 1
+                for index, lesson in enumerate(lessons):
+                    item['week_number'] = week_number
+                    if not (index % len(lessons)):
+                        week_number = 2 if week_number == 1 else 1
                     item['lesson_number'] = lessons_info[count].split()[0]
                     item['lesson_start'] = lessons_start[count]
                     item['lesson_finish'] = lessons_finish[count]
-                    item['week_number'] = (week_number % 2) + 1
                     count += 1
-                    week_number += 1
                     if count == len(lessons_info) - 1:
                         count = 0
-                        week_number = 0
                     lesson_tag_value = lesson.xpath('./@data-content').get()
                     if not lesson_tag_value:
                         self.logger.debug('Skip empty lesson %s', item)
