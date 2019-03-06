@@ -51,6 +51,8 @@ class ScheduleSpider(Spider):
                 'TimeTableForm[faculty]': item['faculty_id'],
                 'TimeTableForm[course]': item['course_id'],
                 'TimeTableForm[group]': item['group_id'],
+                'TimeTableForm[date1]': '18.02.2019',  # TODO: replace with command line param
+                'TimeTableForm[date2]': '03.03.2019',  # TODO: replace with command line param
             }
             yield FormRequest(url=response.url, formdata=form_data, callback=self.parse_schedule,
                               meta={'item': item})
@@ -78,7 +80,7 @@ class ScheduleSpider(Spider):
                 item['date'] = day.xpath('./div/text()').get()
                 item['week_number'] = week_number
                 if not (index % len(days)):
-                        week_number = 2 if week_number == 1 else 1
+                    week_number = 2 if week_number == 1 else 1
 
                 lessons = day.xpath('./div[@class="cell mh-50"]')
                 if not lessons:
@@ -90,7 +92,7 @@ class ScheduleSpider(Spider):
                     item['lesson_start'] = lessons_start[count]
                     item['lesson_finish'] = lessons_finish[count]
                     count += 1
-                    if count == len(lessons_info) - 1:
+                    if count == len(lessons_info):
                         count = 0
                     lesson_tag_value = lesson.xpath('./@data-content').get()
                     if not lesson_tag_value:
@@ -100,7 +102,7 @@ class ScheduleSpider(Spider):
                     discipline = lesson[0]
                     item['discipline'] = discipline[:discipline.find('[')]
                     item['lesson_type'] = discipline[discipline.find('[') + 1:discipline.find(']')]
-                    item['audience'] = lesson[1].split('-', 1)[1]
-                    item['corpus_number'] = lesson[1].split('-', 1)[0].split('. ', 1)[1]
-                    item['lecturer'] = lesson[2]
+                    item['audience'] = lesson[2].split('-', 1)[1]
+                    item['corpus_number'] = lesson[2].split('-', 1)[0].split('. ', 1)[1]
+                    item['lecturer'] = lesson[3]
                     yield item
