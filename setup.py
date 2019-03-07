@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='knu_parser',
-    version='0.0.4',
+    version='0.0.5',
     packages=setuptools.find_packages(),
     url='https://github.com/vlade11115/knu-parser',
     license='CC0 1.0 Universal',
@@ -17,6 +17,7 @@ setuptools.setup(
     python_requires='>=3.5',
     install_requires=[
         'scrapy',
+        'python-dateutil',
     ],
     entry_points={'scrapy': ['settings = knu_parser.settings']},
 )
