@@ -9,10 +9,10 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'knu_parser'
+BOT_NAME = "knu_parser"
 
-SPIDER_MODULES = ['knu_parser.spiders']
-NEWSPIDER_MODULE = 'knu_parser.spiders'
+SPIDER_MODULES = ["knu_parser.spiders"]
+NEWSPIDER_MODULE = "knu_parser.spiders"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'knu_parser (+http://www.yourdomain.com)'
@@ -38,8 +38,7 @@ COOKIES_ENABLED = False
 TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-}
+DEFAULT_REQUEST_HEADERS = {}
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
@@ -87,7 +86,7 @@ AUTOTHROTTLE_ENABLED = True
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 FEED_FORMAT = "json"
 FEED_URI = "%(time)s schedule.json"
-FEED_EXPORT_ENCODING = 'utf-8'
+FEED_EXPORT_ENCODING = "utf-8"
 FEED_EXPORT_INDENT = 4
 
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = "INFO"
